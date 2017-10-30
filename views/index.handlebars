@@ -4,7 +4,11 @@
   <div id="articles">
 	<ul>
 	{{#each articles }}
-	  <li><a href="{{this.link}}"><div>{{this.title}}</div></a></li>
+	  <li>
+  		<p class="article-title" data-id="{{this._id}}">{{this.title}}</p>
+	  	<a href="{{this.link}}" target="blank">(Link here)</a>
+	  	<p><b>Description: </b>{{this.description}}</p>
+	  </li>
 	{{/each}}
 	</ul>
   </div>
