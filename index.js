@@ -41,13 +41,15 @@ mongoose.connect(MONGODB_URI, {
   useMongoClient: true
 });
 
+
 // A GET route for scraping the echojs website
-app.get("/scrape", function(req, res) {
+app.post("/api/rawscrape", function(req, res) {
   // First, we grab the body of the html with request
   axios.get("https://www.reddit.com/r/tech/").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(response.data);
 
+    var resultsArray = [];
     // Now, we grab every h2 within an article tag, and do the following:
     $("#siteTable > div[data-type=link] a.title").each(function(i, element) {
       // Save an empty result object
@@ -58,22 +60,18 @@ app.get("/scrape", function(req, res) {
         .text();
       result.link = $(this)
         .attr("href");
-      result.description = "Placeholder description here...";
-
-      // Create a new Article using the `result` object built from scraping
-      db.Article
-        .create(result)
-        .then(function(dbArticle) {
-          // If we were able to successfully scrape and save an Article, send a message to the client
-          res.send("Scrape Complete");
-        })
-        .catch(function(err) {
-          // If an error occurred, send it to the client
-          res.json(err);
-        });
+      resultsArray.push(result);
+    });
+    db.Article.create(resultsArray, function(err, result) {
+      if(err) {
+        console.log(err);
+        throw new Error("Could not create results array from scraping the web.");
+      }
+      res.json(result);
     });
   });
 });
+
 
 // Route for getting all Articles from the db
 app.get("/articles", function(req, res) {

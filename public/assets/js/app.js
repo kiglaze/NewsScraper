@@ -64,3 +64,13 @@ $(document).on("click", "#savenote", function() {
   $("#bodyinput").val("");
 });
 
+$(document).on("click", "#scrape-web", function() {
+  $.ajax({
+    method: "POST",
+    url: "/api/rawscrape"
+  })
+    // With that done, add the note information to the page
+    .done(function(data) {
+      console.log(data);
+    });
+});
