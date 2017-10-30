@@ -1,0 +1,13 @@
+<div id="wrapper">
+  <h1>Tech Subreddit Article Scraper</h1>
+  <h2><i>This site scrapes information from articles on the Tech Subreddit, and allows users to add comments.</i></h2>
+  <div id="articles">
+	<ul>
+	{{#each articles }}
+	  <li><a href="{{this.link}}"><div>{{this.title}}</div></a></li>
+	{{/each}}
+	</ul>
+  </div>
+
+  <div id="notes"></div>
+</div>

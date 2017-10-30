@@ -4,11 +4,12 @@ var cheerio = require("cheerio");
 var request = require("request");
 
 var express = require("express");
-var expressHandlebars = require("express-handlebars");
+var router = express.Router();
+
+var exphbs = require("express-handlebars");
 var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
-
 // Our scraping tools
 // Axios is a promised-based http library, similar to jQuery's Ajax method
 // It works on the client and on the server
@@ -16,13 +17,14 @@ var axios = require("axios");
 
 // Require all models
 var db = require("./models");
-
 var PORT = process.env.PORT || 3000;
-
 
 // Initialize Express
 var app = express();
 
+// Set Handlebars as the default templating engine.
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 
 // Use body-parser for handling form submissions
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -88,6 +90,22 @@ app.get("/articles", function(req, res) {
 });
 
 
+app.get("/", function(req, res) {
+	  // Grab every document in the Articles collection
+	db.Article
+	.find({})
+	.then(function(dbArticle) {
+	  // If we were able to successfully find Articles, send them back to the client
+		res.render("index", {
+			articles: dbArticle
+		});
+	})
+	.catch(function(err) {
+	  // If an error occurred, send it to the client
+	  res.json(err);
+	}
+	);
+});
 
 
 // Start the server
